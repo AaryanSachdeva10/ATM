@@ -96,7 +96,7 @@ public class Window {
                 // Update account balance
                 CSVReaderUtil.updateAccountBalance(account.getId(), account.getBalance() - amount);
                 JOptionPane.showMessageDialog(null, "Withdraw successful! Withdrawn amount: " + amount, "Success", JOptionPane.INFORMATION_MESSAGE);
-                log("Deposit", amount, account);
+                log("Withdraw", amount, account);
             }
 
             // Write to CSV and reload account data

@@ -1,3 +1,4 @@
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -18,10 +19,12 @@ import java.util.List;
 
 public class ScanWindow {
     private JFrame frame;
-    private SerialCommHandler serialHandler = new SerialCommHandler("COM4", 57600);
+    public String comPort = "COM4";
+    private SerialCommHandler serialHandler = new SerialCommHandler(comPort, 57600);
     public static Account account;
     public static List<Account> accounts = CSVReaderUtil.readAccountsFromCSV(CSVReaderUtil.filePath);
-
+    private JLabel activity;
+    
     public static void main(String[] args) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -61,24 +64,34 @@ public class ScanWindow {
             public void actionPerformed(ActionEvent e) {
             	if(serialHandler.openPort()) {
             		String data = serialHandler.readData();
-            		System.out.println(CSVReaderUtil.accounts);
             		for(Account account : CSVReaderUtil.accounts) {
             			if(account.getId().equals(data)) {
             				ScanWindow.account = account;
                 			Window.user = account.getName();
                             openSecondFrame();
             			}
+            			else {
+            				activity.setForeground(Color.red);
+            				activity.setText("Bad read or invalid card!");
+            			}
             		}
             	}
             	else {
-            		//title.setText("Failed to open port");
+            		activity.setForeground(Color.red);
+            		activity.setText("Failed to open port " + comPort);
             	}
             }
         });
         proceedButton.setFont(new Font("Segoe UI Light", Font.PLAIN, 45));
-        proceedButton.setBounds(10, 35, 330, 80);
+        proceedButton.setBounds(10, 48, 330, 80);
         proceedButton.setFocusable(false);
         frame.getContentPane().add(proceedButton);
+        
+        activity = new JLabel("Scan card");
+        activity.setFont(new Font("Tahoma", Font.PLAIN, 20));
+        activity.setHorizontalAlignment(SwingConstants.CENTER);
+        activity.setBounds(10, 10, 330, 28);
+        frame.getContentPane().add(activity);
     }
 
     private void openSecondFrame() {
